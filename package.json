@@ -1,0 +1,19 @@
+{
+	"name": "wikipedia-search",
+	"version": "1.0.0",
+	"description": "Wikipedia article search application",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodejs src/server.js",
+		"dev": "nodemon src/server.js",
+		"watch": "tsc src/script.ts -w"
+	},
+	"author": "Tomasz Osiński (Liviere)",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^17.0.30",
+		"nodemon": "^2.0.16",
+		"ts-node": "^10.7.0",
+		"typescript": "^4.6.4"
+	}
+}
