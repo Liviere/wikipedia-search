@@ -6,6 +6,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "nodejs src/server.js",
 		"dev": "nodemon src/server.js",
+		"build": "tsc src/script.ts",
 		"watch": "tsc src/script.ts -w"
 	},
 	"author": "Tomasz Osiński (Liviere)",
