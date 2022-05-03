@@ -1,6 +1,7 @@
 let timeout: NodeJS.Timeout | null = null;
 let language = (localStorage.getItem('language') as Language) || 'en';
 let currentSearch = '';
+let searchId: string | null = null;
 const savedTheme: Theme =
 	(localStorage.getItem('theme') as Theme) || 'light-theme';
 
@@ -33,6 +34,17 @@ async function getEntries(value: string) {
 	});
 }
 
+function makeId(length: number) {
+	let result = '';
+	const characters =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
+
 function removeTimeout() {
 	if (timeout) {
 		clearTimeout(timeout);
@@ -48,17 +60,27 @@ function debounce(callback: Function, delay: number) {
 	}, delay);
 }
 
+function clearEntries() {
+	const listElement = document.getElementById('entries');
+	if (listElement) {
+		listElement.classList.add('empty');
+		listElement.innerHTML = '';
+	}
+}
+
 function onInput(value: string, delay = 400) {
+	clearEntries();
 	currentSearch = value;
 	const searchBox = document.querySelector('.search-box');
 	if (searchBox) {
 		if (value) {
-			debounce(() => search(value), delay);
+			const id = makeId(12);
+			searchId = id;
+			debounce(() => search(value, id), delay);
 			searchBox.classList.remove('empty');
 		} else {
+			searchId = null;
 			removeTimeout();
-			const listElement = document.getElementById('entries');
-			if (listElement) listElement.innerHTML = '';
 			searchBox.classList.add('empty');
 		}
 	}
@@ -88,14 +110,19 @@ function toggleTheme(button: HTMLButtonElement) {
 function selectLanguage(value: Language) {
 	language = value;
 	localStorage.setItem('language', value);
+	const randomLink = `https://${language}.wikipedia.org/wiki/Special:Random`;
+	const randomButton = document.querySelector('.link-button');
+	if (randomButton) randomButton.setAttribute('href', randomLink);
 	onInput(currentSearch, 10);
 }
 
-async function search(value: string) {
+async function search(value: string, id: string) {
 	const listElement = document.getElementById('entries');
+	const loading = document.querySelector('.loading');
 	const textLimit = 250;
 	let content = '';
-	if (listElement) {
+	if (listElement && loading) {
+		loading.classList.add('active');
 		getEntries(value).then((response) => {
 			if (response.query) {
 				const entries = Object.values(response.query.pages)
@@ -109,20 +136,20 @@ async function search(value: string) {
 					content =
 						content +
 						`
-					<li><a 
+					<li><a
 						href="https://${language}.wikipedia.org/?curid=${page.pageid}"
-						target="_blank" 
+						target="_blank"
 						class="card"
 					>
 						<div class="image ${!page.thumbnail ? 'default' : ''}">
-							<img 
-							
+							<img
+
 								src="${
 									page.thumbnail?.source ||
 									'https://res.cloudinary.com/liviere/image/upload/v1651493219/article_yzsmlt.png'
-								}" 
-								width="${page.thumbnail?.width || 256}" 
-								height="${page.thumbnail?.height || 256}" 
+								}"
+								width="${page.thumbnail?.width || 256}"
+								height="${page.thumbnail?.height || 256}"
 							/>
 						</div>
 						<div class="text">
@@ -134,7 +161,9 @@ async function search(value: string) {
 				`;
 				});
 			} else content = '';
-			listElement.innerHTML = content;
+			if (id === searchId) listElement.innerHTML = content;
+			loading.classList.remove('active');
+			listElement.classList.remove('empty');
 		});
 	}
 }
