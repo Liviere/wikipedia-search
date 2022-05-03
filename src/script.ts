@@ -1,6 +1,12 @@
+let timeout: NodeJS.Timeout | null = null;
+let language = (localStorage.getItem('language') as Language) || 'en';
+let currentSearch = '';
+const savedTheme: Theme =
+	(localStorage.getItem('theme') as Theme) || 'light-theme';
+
 async function getEntries(value: string) {
 	const url =
-		'https://en.wikipedia.org/w/api.php?' +
+		`https://${language}.wikipedia.org/w/api.php?` +
 		'format=json&action=query&generator=search&gsrnamespace=0&gsrlimit=8' +
 		'&prop=pageimages|extracts|description&pilimit=50&exintro=1' +
 		'&explaintext=1&exsentences=2&exlimit=20' +
@@ -42,11 +48,11 @@ function debounce(callback: Function, delay: number) {
 	}, delay);
 }
 
-function onInput(value: string) {
+function onInput(value: string, delay = 400) {
 	const searchBox = document.querySelector('.search-box');
 	if (searchBox) {
 		if (value) {
-			debounce(() => search(value), 250);
+			debounce(() => search(value), delay);
 			searchBox.classList.remove('empty');
 		} else {
 			removeTimeout();
@@ -67,8 +73,8 @@ function resetSearchBox() {
 function toggleTheme(button: HTMLButtonElement) {
 	const body = document.querySelector('body');
 	if (body) {
-		const previousTheme = body.className as theme;
-		const nextTheme: theme =
+		const previousTheme = body.className as Theme;
+		const nextTheme: Theme =
 			previousTheme === 'dark-theme' ? 'light-theme' : 'dark-theme';
 
 		body.classList.add(nextTheme);
@@ -78,12 +84,18 @@ function toggleTheme(button: HTMLButtonElement) {
 	}
 }
 
+function selectLanguage(value: Language) {
+	language = value;
+	localStorage.setItem('language', value);
+	onInput(currentSearch, 10);
+}
+
 async function search(value: string) {
 	const listElement = document.getElementById('entries');
 	const textLimit = 250;
 	let content = '';
-	if (listElement && previousSearch !== value) {
-		previousSearch = value;
+	if (listElement) {
+		currentSearch = value;
 		getEntries(value).then((response) => {
 			if (response.query) {
 				const entries = Object.values(response.query.pages)
@@ -168,6 +180,41 @@ const sun = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
 							39.3 10.225 39.275Q9.6 39.25 9.15 38.85Z"/>
 						</svg>`;
 
+const themeButton = document.querySelector(
+	'.switch-theme'
+) as HTMLButtonElement;
+if (themeButton) if (savedTheme === 'dark-theme') toggleTheme(themeButton);
+
+const selectLang = document.querySelector(
+	'.select-language'
+) as HTMLSelectElement;
+if (selectLang) selectLang.value = language;
+
+type Theme = 'dark-theme' | 'light-theme';
+type Language =
+	| 'ar'
+	| 'arz'
+	| 'ceb'
+	| 'cs'
+	| 'da'
+	| 'de'
+	| 'en'
+	| 'es'
+	| 'fr'
+	| 'it'
+	| 'nl'
+	| 'no'
+	| 'ja'
+	| 'pl'
+	| 'pt'
+	| 'ru'
+	| 'tr'
+	| 'sv'
+	| 'uk'
+	| 'vl'
+	| 'war'
+	| 'zh';
+
 interface ApiResponse {
 	query?: {
 		pages: {
@@ -188,15 +235,3 @@ interface ApiResponse {
 		};
 	};
 }
-
-type theme = 'dark-theme' | 'light-theme';
-
-let timeout: NodeJS.Timeout | null = null;
-let previousSearch = '';
-const savedTheme: theme =
-	(localStorage.getItem('theme') as theme) || 'light-theme';
-
-const themeButton = document.querySelector(
-	'.switch-theme'
-) as HTMLButtonElement;
-if (themeButton) if (savedTheme === 'dark-theme') toggleTheme(themeButton);

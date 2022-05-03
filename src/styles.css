@@ -69,7 +69,7 @@ body {
 }
 
 .search-box.empty ~ .results {
-	visibility: hidden;
+	display: none;
 }
 
 .search-box > h1 {
@@ -108,6 +108,17 @@ body {
 	height: 1.5rem;
 	top: 0.5rem;
 	right: 1rem;
+}
+
+.select-language {
+	width: 3.3rem;
+	text-transform: uppercase;
+	margin-right: 2rem;
+	background-clip: padding-box;
+	border: 0.0625em solid transparent;
+	background-color: var(--clr-card);
+	color: var(--clr-main);
+	text-align: end;
 }
 
 .results {
