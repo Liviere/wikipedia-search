@@ -81,7 +81,7 @@ function toggleTheme(button: HTMLButtonElement) {
 		body.classList.add(nextTheme);
 		body.classList.remove(previousTheme);
 		localStorage.setItem('theme', nextTheme);
-		button.innerHTML = nextTheme === 'light-theme' ? sun : moon;
+		button.innerHTML = nextTheme === 'light-theme' ? moon : sun;
 	}
 }
 
