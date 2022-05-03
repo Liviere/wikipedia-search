@@ -49,6 +49,7 @@ function debounce(callback: Function, delay: number) {
 }
 
 function onInput(value: string, delay = 400) {
+	currentSearch = value;
 	const searchBox = document.querySelector('.search-box');
 	if (searchBox) {
 		if (value) {
@@ -95,7 +96,6 @@ async function search(value: string) {
 	const textLimit = 250;
 	let content = '';
 	if (listElement) {
-		currentSearch = value;
 		getEntries(value).then((response) => {
 			if (response.query) {
 				const entries = Object.values(response.query.pages)
@@ -110,7 +110,7 @@ async function search(value: string) {
 						content +
 						`
 					<li><a 
-						href="https://en.wikipedia.org/?curid=${page.pageid}"
+						href="https://${language}.wikipedia.org/?curid=${page.pageid}"
 						target="_blank" 
 						class="card"
 					>
