@@ -178,7 +178,8 @@ body {
 	align-items: center;
 }
 
-.image.default > img {
+.image.default > svg {
+	fill: url(#gradient-fill);
 	width: 65%;
 	height: auto;
 }
