@@ -4,8 +4,8 @@
 	"description": "Wikipedia article search application",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nodejs src/server.js",
-		"dev": "nodemon src/server.js",
+		"start": "./bin/start.sh",
+		"dev": "./bin/dev.sh",
 		"build": "tsc src/script.ts",
 		"watch": "tsc src/script.ts -w"
 	},

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  wikipedia_viewier:
+    build: .
+    container_name: wikipedia_viewier
+    restart: unless-stopped
+    ports:
+      - ${PORT:-3000}:3000
+    networks:
+      - wikipedia-viewier-network
+
+networks:
+  wikipedia-viewier-network:
+    name: wikipedia-viewier-network

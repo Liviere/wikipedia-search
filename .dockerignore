@@ -1,0 +1,5 @@
+.env
+.gitignore
+dev.txt
+node_modules
+yarn.lock
