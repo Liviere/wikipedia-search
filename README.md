@@ -4,6 +4,8 @@
 
 A simple application to search wikipedia entries.
 
+You can try it [here](https://wikipedia.liviere.pl)
+
 ## Development
 
 Run the development server:
@@ -16,7 +18,12 @@ yarn dev
 
 ## Deployment
 
-First, you can set a port for the app with the `.env` file,
+You can set a custom port for the app with the `.env` file, otherwise it
+will run on port 3000.
+
+```bash
+PORT=3030
+```
 
 ### Node.js
 
@@ -75,4 +82,19 @@ You can learn more [here](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 ```bash
 docker-compose up
+```
+
+### NGINX Basic Configuration
+
+```
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_set_header   X-Forwarded-For $remote_addr;
+        proxy_set_header   Host $http_host;
+        proxy_pass         http://127.0.0.1:3000;
+    }
+}
 ```

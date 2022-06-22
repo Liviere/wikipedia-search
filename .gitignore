@@ -12,5 +12,4 @@
 .env.production.local
 
 dev.txt
-*.js
-!server.js
+script.js

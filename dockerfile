@@ -1,10 +1,9 @@
 FROM node:18-alpine
-
-# Create app directory
-WORKDIR /usr/src/app
-
-# Bundle app source
+WORKDIR /app
 COPY . .
+RUN yarn install --frozen-lockfile
+RUN yarn build
 
-EXPOSE 3000
-CMD [ "node", "./src/server.js" ]
+USER node
+
+CMD ["yarn", "start"]
